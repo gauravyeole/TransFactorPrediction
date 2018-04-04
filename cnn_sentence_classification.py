@@ -9,9 +9,18 @@ import pandas as pd
 
 sess = tf.InteractiveSession()
 
-def one_hot_encode(dna_string, bound):
-    num_bases = len(dna_string)*4
+def encode_label(label):
     label = np.empty(2, dtype=np.dtype('float32'))
+    if bound == 0:
+        label[0] = 0.0
+        label[1] = 0.0
+    else:
+        label[0] = 0.0
+        label[1] = 1.0
+    return label
+
+def encode_dna_string(dna_string):
+    num_bases = len(dna_string)*4
     features = np.empty(num_bases, dtype=np.dtype('float32'))
     cur_base = 0
     for dna_base in dna_string:
@@ -36,18 +45,16 @@ def one_hot_encode(dna_string, bound):
             features[cur_base + 2] = 0.0
             features[cur_base + 3] = 1.0
         cur_base = cur_base + 4
-    if bound == 0:
-        label[0] = 0.0
-        label[1] = 0.0
-    else:
-        label[0] = 0.0
-        label[1] = 1.0
-    return (features, label)
+    return features
 
 # argument: input filename
 def encode_dataset(filename):
     df = pd.read_csv(filename)
-
+    df["np_features"] = df.apply(lambda  row: encode_dna_string(row["sequence"]), axis=1)
+    df["np_label"] = df.apply(lambda  row: encode_label(row["label"]), axis=1)
+    features = df.as_matrix(columns=[df["np_features"]])
+    labels = df.as_matrix(columns=df["np_label"])
+    return (features, labels)
 
 
 def main(_):
