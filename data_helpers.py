@@ -12,7 +12,7 @@ def encode_label(bound):
     else:
         label[0] = 0.0
         label[1] = 1.0
-    return label
+    return label.tolist()
 
 def encode_dna_string(dna_string):
     num_bases = len(dna_string)*4
@@ -40,7 +40,7 @@ def encode_dna_string(dna_string):
             features[cur_base + 2] = 0.0
             features[cur_base + 3] = 1.0
         cur_base = cur_base + 4
-    return features
+    return features.tolist()
 
 def load_data_and_labels(filename):
     fullpath = "/Users/gauravyeole/Downloads/BigData/TransFactorPrediction/" + filename
@@ -48,9 +48,9 @@ def load_data_and_labels(filename):
     df['np_features'] = df.sequence.apply(encode_dna_string)
     df['np_label'] = df.label.apply(encode_label)
     df = df.reindex(np.random.permutation(df.index))
-    features = df.np_features.values
-    labels = df.np_label.values
-    return features, labels
+    features = df.np_features.as_matrix().tolist()
+    labels = df.np_label.as_matrix().tolist()
+    return np.array(features), np.array(labels)
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
