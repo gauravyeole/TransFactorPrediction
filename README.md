@@ -20,3 +20,15 @@ Deep Neural Network implemented in TensorFlow and Python for predicting whether 
 or not to given DNA sequence. 
 
 Implemented architecture is a Convolutional Neural Network.
+
+## Requirements 
+- Python3
+- Numpy
+- Pandas
+- TensorFlow
+- Keras
+
+To train model and predict for unknown data:
+```buildoutcfg
+python keras_cnn.py
+```
