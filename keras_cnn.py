@@ -1,5 +1,5 @@
 from keras.layers.convolutional import Conv2D, MaxPooling2D
-from keras.layers.core import Dense, Flatten
+from keras.layers.core import Dense, Flatten, Dropout
 
 from keras.models import Sequential
 
@@ -17,14 +17,21 @@ x, y = load_data_and_labels("train.csv")
 model = Sequential()
 model.add(Conv2D(16, (12, 4), padding='valid', input_shape=(14, 4, 1),
                         activation='relu'))
+# model.add(Conv2D(12, (8, 4), padding='valid', input_shape=(14, 4, 1),
+#                         activation='relu'))
 
 model.add(MaxPooling2D(pool_size=(2,1), padding='valid'))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(32, (1, 1), activation='relu'))
+model.add(MaxPooling2D(pool_size=(1, 1)))
+model.add(Dropout(0.25))
 
 model.add(Flatten())
 model.add(Dense(32, activation="relu"))
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile(loss='mean_squared_error', optimizer='sgd')
+model.compile(loss='mean_squared_error', metrics=['accuracy'], optimizer='sgd')
 
 model.summary()
 
@@ -52,6 +59,10 @@ model.fit(X_train_reshaped, Y_train,
 
 pred = model.predict(X_test_reshaped, batch_size=32).flatten()
 print("Predictions", pred[0:5])
+
+scores = model.evaluate(X_test_reshaped, Y_test, verbose=1)
+print('Scores', scores[0])
+print('Test accuracy:', scores[1])
 
 test_x = load_test("test.csv")
 test_x_reshaped = test_x.reshape((test_x.shape[0], test_x.shape[1], test_x.shape[2], 1))
