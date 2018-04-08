@@ -60,4 +60,4 @@ pred = model.predict(test_x_reshaped, batch_size=32).flatten()
 result = np.around(pred).astype(int).tolist()
 
 outputdf = pd.DataFrame(result, columns = ["prediction"])
-outputdf.to_csv("output.csv", index_label = "id")
+outputdf.to_csv("result.csv", index_label = "id")
