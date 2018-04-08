@@ -1,6 +1,5 @@
-from tensorflow.contrib.learn.python.learn.datasets import base
-from tensorflow.contrib.layers.python.layers.layers import batch_norm,convolution2d,max_pool2d,fully_connected,flatten
-import tensorflow as tf
+
+
 import numpy as np
 import pandas as pd
 
@@ -43,14 +42,22 @@ def encode_dna_string(dna_string):
     return features.tolist()
 
 def load_data_and_labels(filename):
-    fullpath = "/Users/gauravyeole/Downloads/BigData/TransFactorPrediction/" + filename
+    fullpath = os.getcwd() + "/" + filename
     df = pd.read_csv(fullpath, usecols=['id', 'sequence', 'label'])
     df['np_features'] = df.sequence.apply(encode_dna_string)
     df['np_label'] = df.label.apply(encode_label)
     df = df.reindex(np.random.permutation(df.index))
     features = df.np_features.as_matrix().tolist()
-    labels = df.np_label.as_matrix().tolist()
-    return np.array(features), np.array(labels)
+    # labels = df.np_label.as_matrix().tolist()
+    labels = df.label.as_matrix().tolist()
+    return np.array(features).reshape(len(features), 14, 4), np.array(labels)
+
+def load_test(filename):
+    fullpath = "/Users/gauravyeole/Downloads/BigData/TransFactorPrediction/" + filename
+    df = pd.read_csv(fullpath, usecols=['id', 'sequence'])
+    df['np_features'] = df.sequence.apply(encode_dna_string)
+    features = df.np_features.as_matrix().tolist()
+    return np.array(features).reshape((len(features)),14,4)
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
